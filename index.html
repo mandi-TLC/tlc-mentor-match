@@ -1194,16 +1194,7 @@ async function submitChoices() {
   }
 
   try {
-    const response = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'submit',
-        role: role,
-        name: submitterName.trim(),
-        choices: choiceNames
-      })
-    });
+    const response = await fetch(APPS_SCRIPT_URL + '?action=getAll');
 
     const data = await response.json();
     if (data.success) {
