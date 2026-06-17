@@ -777,9 +777,23 @@
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby955s6zV0x7SYZLD2_jlU43oUt8fJ5YxwHeDtAC62LZiSolkMQrPCDi-7MwQg8SKzH/exec';
 
 const ACCESS_CODES = {
-  'MM2026DC2B': 'student',
-  'MM2026DC': 'doctor',
-  'MM2026HQ': 'admin'
+  'MM2026RJ':   { role: 'student', name: 'Ryan Joseph' },
+  'MM2026KG':   { role: 'student', name: 'Kiara Graham' },
+  'MM2026BM':   { role: 'student', name: 'Brandon Mendes' },
+  'MM2026AD':   { role: 'student', name: 'Amber Digiacomo' },
+  'MM2026ARY':  { role: 'student', name: 'Amelia Rodrock-Yoder' },
+  'MM2026JA':   { role: 'student', name: 'Justine Almandres' },
+  'MM2026JF':   { role: 'doctor', name: 'Dr. Jason Feltz' },
+  'MM2026TW':   { role: 'doctor', name: 'Dr. Trea Wessel' },
+  'MM2026ALTK': { role: 'doctor', name: 'Dr. Amanda Lajoie & Dr. Tyler Kuntz' },
+  'MM2026DL':   { role: 'doctor', name: 'Dr. David Lester' },
+  'MM2026JH':   { role: 'doctor', name: 'Dr. Jake Helms' },
+  'MM2026PS':   { role: 'doctor', name: 'Dr. Phil Szalowski' },
+  'MM2026MN':   { role: 'doctor', name: 'Dr. Michael Nagel' },
+  'MM2026LS':   { role: 'doctor', name: 'Dr. Len Siskin' },
+  'MM2026MAR':  { role: 'doctor', name: 'Dr. Matt & Dr. Annie Reyes' },
+  'MM2026MH':   { role: 'doctor', name: 'Dr. Michael Hollerbach' },
+  'MM2026HQ':   { role: 'admin', name: 'HQ' }
 };
 
 // ============================================================
@@ -1025,15 +1039,16 @@ let submitted = false;
 // ============================================================
 function handleLogin() {
   const code = document.getElementById('access-code').value.trim();
-  const role = ACCESS_CODES[code];
-  if (!role) {
+  const entry = ACCESS_CODES[code];
+  if (!entry) {
     document.getElementById('login-error').textContent = 'Invalid access code. Please try again.';
     return;
   }
-  currentRole = role;
+  currentRole = entry.role;
+  currentUser = entry.name;
   document.getElementById('login-error').textContent = '';
 
-  if (role === 'admin') {
+  if (entry.role === 'admin') {
     showScreen('admin-screen');
     loadAdminData();
   } else {
@@ -1063,7 +1078,7 @@ function buildApp() {
   const viewingLabel = isStudent ? 'mentor doctors' : 'students';
 
   document.getElementById('header-role').innerHTML =
-    (isStudent ? 'Student view' : 'Doctor view');
+    currentUser + '<br><span style="font-weight:400;font-size:0.65rem;opacity:0.7">' + (isStudent ? 'Student' : 'Doctor') + '</span>';
 
   document.getElementById('section-title').textContent =
     isStudent ? 'Meet your potential mentors' : 'Meet the students';
@@ -1200,19 +1215,11 @@ async function submitChoices() {
   const role = currentRole === 'student' ? 'Students' : 'Doctors';
   const name = choiceNames[0]; // we'll use a prompt if needed — for now use placeholder
 
-  // Prompt for submitter name
-  const submitterName = window.prompt('Please enter your full name to confirm your submission:');
-  if (!submitterName || submitterName.trim() === '') {
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Submit selections';
-    return;
-  }
-
   try {
     const params = new URLSearchParams({
       action: 'submit',
       role: role,
-      name: submitterName.trim(),
+      name: currentUser,
       c1: choiceNames[0],
       c2: choiceNames[1],
       c3: choiceNames[2]
