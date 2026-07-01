@@ -1334,7 +1334,7 @@ function renderAdminData(data) {
   const doctors = data.Doctors || [];
 
   // Status lists
-  const studentNames = STUDENTS.map(s => s.name);
+  const studentNames = [...STUDENTS.map(s => s.name), 'Braden Jewett'];
   const doctorNames = DOCTORS.map(d => d.name);
 
   const submittedStudents = students.map(s => s.name);
